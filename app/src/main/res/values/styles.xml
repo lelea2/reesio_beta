@@ -4,11 +4,6 @@
     <style name="AppTheme" parent="Theme.AppCompat.NoActionBar">
         <!-- Customize your theme here. -->
         <item name="colorPrimary">@color/colorPrimary</item>
-        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
-        <item name="colorAccent">@color/colorAccent</item>
-        <!--<item name="windowNoTitle">true</item>
-        <item name="android:windowTitleBackgroundStyle">@android:color/transparent</item>
-        <item name="android:windowTitleStyle">@style/CustomWindowTitleStyle</item>-->
         <item name="android:windowFullscreen">true</item>
     </style>
     <style name="CustomWindowTitleStyle">
