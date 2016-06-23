@@ -36,7 +36,8 @@ public class MainActivity extends AppCompatActivity {
         webSettings.setDatabasePath(this.getFilesDir().getParentFile().getPath() + "/databases/");
         mainWebView.setWebViewClient(new MyCustomWebViewClient());
         mainWebView.setScrollBarStyle(View.SCROLLBARS_INSIDE_OVERLAY);
-        mainWebView.loadUrl("https://www.reesio.com/?mobile_override=true");
+        mainWebView.loadUrl("https://agentsan:10elmstreet@reaslo-staging.herokuapp" +
+                ".com/?mobile_override=true");
     }
 
     private class MyCustomWebViewClient extends WebViewClient {
