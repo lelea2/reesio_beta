@@ -1,5 +1,6 @@
 package com.kdao.reesio_beta;
 
+import android.app.ProgressDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 
@@ -15,10 +16,12 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.webkit.JavascriptInterface;
+import android.graphics.Bitmap;
 
 public class MainActivity extends AppCompatActivity {
 
-    WebView mainWebView;
+    private WebView mainWebView;
+    private ProgressDialog progressDialog;
 
     /**
      * Called when the activity is first created.
@@ -28,6 +31,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         mainWebView = (WebView) findViewById(R.id.mainWebView);
+
         WebSettings webSettings = mainWebView.getSettings();
         webSettings.setJavaScriptEnabled(true); //ENABLE JS
         webSettings.setDomStorageEnabled(true); //enable DOM storage
@@ -36,15 +40,32 @@ public class MainActivity extends AppCompatActivity {
         webSettings.setDatabasePath(this.getFilesDir().getParentFile().getPath() + "/databases/");
         mainWebView.setWebViewClient(new MyCustomWebViewClient());
         mainWebView.setScrollBarStyle(View.SCROLLBARS_INSIDE_OVERLAY);
-        mainWebView.loadUrl("https://agentsan:10elmstreet@reaslo-staging.herokuapp" +
-                ".com/?mobile_override=true");
+        mainWebView.loadUrl("https://www.reesio.com");
     }
 
     private class MyCustomWebViewClient extends WebViewClient {
         @Override
+        public void onPageStarted(WebView view, String url, Bitmap favicon) {
+            // TODO Auto-generated method stub
+            super.onPageStarted(view, url, favicon);
+        }
+
+        //According to android document, this is deperecate on app >=24
+        @Override
         public boolean shouldOverrideUrlLoading(WebView view, String url) {
+            // TODO Auto-generated method stub
+            progressDialog = ProgressDialog.show(MainActivity.this, null, "loading, please wait...");
             view.loadUrl(url);
             return true;
+        }
+
+        @Override
+        public void onPageFinished(WebView view, String url) {
+            // TODO Auto-generated method stub
+            if (progressDialog != null) {
+                progressDialog.dismiss();
+            }
+            super.onPageFinished(view, url);
         }
     }
 
@@ -80,15 +101,13 @@ public class MainActivity extends AppCompatActivity {
         @JavascriptInterface
         public String getItem(String key) {
             String value = null;
-            if(key != null)
-            {
+            if(key != null) {
                 database = localStorageDBHelper.getReadableDatabase();
                 Cursor cursor = database.query(LocalStorage.LOCALSTORAGE_TABLE_NAME,
                         null,
                         LocalStorage.LOCALSTORAGE_ID + " = ?",
                         new String [] {key},null, null, null);
-                if(cursor.moveToFirst())
-                {
+                if(cursor.moveToFirst()) {
                     value = cursor.getString(1);
                 }
                 cursor.close();
@@ -110,12 +129,9 @@ public class MainActivity extends AppCompatActivity {
                 ContentValues values = new ContentValues();
                 values.put(LocalStorage.LOCALSTORAGE_ID, key);
                 values.put(LocalStorage.LOCALSTORAGE_VALUE, value);
-                if(oldValue != null)
-                {
+                if(oldValue != null) {
                     database.update(LocalStorage.LOCALSTORAGE_TABLE_NAME, values, LocalStorage.LOCALSTORAGE_ID + "='" + key + "'", null);
-                }
-                else
-                {
+                } else {
                     database.insert(LocalStorage.LOCALSTORAGE_TABLE_NAME, null, values);
                 }
                 database.close();
@@ -128,8 +144,7 @@ public class MainActivity extends AppCompatActivity {
          */
         @JavascriptInterface
         public void removeItem(String key) {
-            if(key != null)
-            {
+            if(key != null) {
                 database = localStorageDBHelper.getWritableDatabase();
                 database.delete(LocalStorage.LOCALSTORAGE_TABLE_NAME, LocalStorage.LOCALSTORAGE_ID + "='" + key + "'", null);
                 database.close();

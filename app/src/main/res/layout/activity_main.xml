@@ -6,6 +6,7 @@
           android:background="@color/colorBg"
           android:scaleType="centerCrop"
           tools:context="com.kdao.reesio_beta.MainActivity">
+
     <WebView android:layout_width="match_parent"
              android:layout_height="match_parent"
              android:id="@+id/mainWebView">
